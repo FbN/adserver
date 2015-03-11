@@ -21,6 +21,7 @@ $app = call_user_func(function() {
 	$app['root'] = $rootFolder;
 	$app['name'] = 'Adserver';
 	$app['folder'] = $appFolder;
+	$app['cachefolder'] = $rootFolder.'/cache';
 	require $appFolder.'/config.php';
 	return $app;
 });
@@ -34,9 +35,14 @@ $app['models.namespace']="Adserver\Models";
 $app['models.path']= $app['root']."/src/Adserver/Models";
 $app->register(new \Fbn\Doctrine\ModelsServiceProvider());
 
+// === Twig ===
+$app->register(new \Silex\Provider\TwigServiceProvider(), array(
+		'twig.path' => $app['folder'].'/views'
+));
+
 // === Security ===
 $app->register(new Silex\Provider\SessionServiceProvider());
-$app['session.storage.save_path'] = $app['config']['session.localPath']?$app['folder'].'/cache/sessions':null;
+$app['session.storage.save_path'] = $app['config']['session.localPath']?$app['cachefolder'].'/sessions':null;
 $app['security.userProvider'] =  function($c){
 	return new \Adserver\Security\UserProvider($c['orm.em']);
 };
@@ -58,29 +64,18 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 $app['security.role_hierarchy'] = array( (User::ROLE_ADMIN) => array((User::ROLE_CUSTOMER)) );
 $app->register(new Silex\Provider\RememberMeServiceProvider());
 $app['controllers.security'] = function($c){
-	return new \Agents\Controllers\SecurityController(
+	return new \Adserver\Controllers\SecurityController(
 			$c['url_generator'],
-			$c['oc'],
 			$c['orm.em'],
-			$c['config'],
-			$c['meshService']
+			$c['alerts'],
+			$c['twig'],
+			$c['config']
 	);
 };
 $app->get('/signIn', "controllers.security:signInAction");
 // ================
 
 // === Filters ===
-$app['meshService'] = function($c){
-	return new \Fbn\Silex\MeshService(
-			$c['folder'].'/views', 
-			$c['folder'].'/views/_layout');
-};
-$app->after(function (Request $request, Response $response) {
-	if(is_a($response, '\\Fbn\\Silex\\MeshResponse')){
-		$response->render();
-	}
-	return $response; 
-});
 // ===============
 
 // === Alerts ===
@@ -99,16 +94,7 @@ $controllers = array(
 foreach ($controllers as $cc){
 	$app['controllers.'.$cc] = function($c) use ($cc){
 		$claz = "\\Agents\\Controllers\\".ucfirst($cc)."Controller";
-		return new $claz(
-				$c['url_generator'],
-				$c['oc'],
-				$c['orm.em'],
-				$c['config'],
-				$c['meshService'],
-				$c['security'],
-				$c['security.encoder_factory'],
-				$c['alerts']
-		);
+		return new $claz($app);
 	};	
 }
 // ====================
@@ -117,21 +103,21 @@ foreach ($controllers as $cc){
 // === Routing ===
 $app->get('/', "controllers.home:indexAction");
 
-$app->get('/agent', "controllers.agents:indexAction")->bind('agents');
-$app->post('/agent/delete', "controllers.agents:deleteAction")->bind('agents.delete');
-$app->get('/agent/create', "controllers.agents:createAction")->bind('agents.create');
-$app->post('/agent/create', "controllers.agents:createAction");
-$app->get('/agent/{id}', "controllers.agents:editAction")->bind('agents.edit');
-$app->post('/agent/{id}', "controllers.agents:editAction");
-$app->get('/agent/{id}/customers', "controllers.agents:indexCustomersAction")->bind('agents.customers');
-$app->post('/agent/{id}/customers/{cid}', "controllers.agents:addCustomersAction")->bind('agents.customers.add');
-$app->post('/agent/{id}/customers.delete', "controllers.agents:deleteCustomersAction")->bind('agents.customers.delete');
+// $app->get('/agent', "controllers.agents:indexAction")->bind('agents');
+// $app->post('/agent/delete', "controllers.agents:deleteAction")->bind('agents.delete');
+// $app->get('/agent/create', "controllers.agents:createAction")->bind('agents.create');
+// $app->post('/agent/create', "controllers.agents:createAction");
+// $app->get('/agent/{id}', "controllers.agents:editAction")->bind('agents.edit');
+// $app->post('/agent/{id}', "controllers.agents:editAction");
+// $app->get('/agent/{id}/customers', "controllers.agents:indexCustomersAction")->bind('agents.customers');
+// $app->post('/agent/{id}/customers/{cid}', "controllers.agents:addCustomersAction")->bind('agents.customers.add');
+// $app->post('/agent/{id}/customers.delete', "controllers.agents:deleteCustomersAction")->bind('agents.customers.delete');
 
-$app->get('/customer', "controllers.customers:indexAction")->bind('customers');
-$app->get('/customer/search', "controllers.customers:searchAction")->bind('customers.search'); //json
-$app->get('/customer/{id}/login', "controllers.customers:loginAction")->bind('customers.login');
+// $app->get('/customer', "controllers.customers:indexAction")->bind('customers');
+// $app->get('/customer/search', "controllers.customers:searchAction")->bind('customers.search'); //json
+// $app->get('/customer/{id}/login', "controllers.customers:loginAction")->bind('customers.login');
 
-$app->get('/order', "controllers.orders:indexAction")->bind('orders');
+// $app->get('/order', "controllers.orders:indexAction")->bind('orders');
 
 
 return $app;

@@ -37,3 +37,4 @@ Adserver/config.php
 .buildpath
 .project
 composer.lock
+cache

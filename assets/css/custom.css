@@ -1,0 +1,26 @@
+html body > .header .logo {
+	font-family: 'Source Sans Pro',​sans-serif;
+	font-weight: 100;
+}
+.form-group .alert { margin-left: 0; margin-top: 15px; }
+.list .table > thead > tr > th, 
+.list .table > tbody > tr > th, 
+.list .table > tfoot > tr > th, 
+.list .table > thead > tr > td, 
+.list .table > tbody > tr > td, 
+.list .table > tfoot > tr > td{ padding-bottom: 18px; padding-top: 18px;}
+.content .row { margin-bottom: 15px; }
+.pagination > li > a { box-shadow: none; }
+.text-elli {
+	overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;	
+}
+.nav-tab-b2b .tab-content { padding-top: 15px; }
+.nav-tab-b2b .nav-tabs { border-bottom: 0; }
+.nav-tab-b2b .nav-tabs > li.active > a, 
+.nav-tab-b2b .nav-tabs > li.active > a:hover, 
+.nav-tab-b2b .nav-tabs > li.active > a:focus {
+    background: none repeat scroll 0 0 #eee;
+    border-color: #eee;
+}
