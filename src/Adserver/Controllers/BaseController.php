@@ -117,7 +117,7 @@ class BaseController {
 			if(isset($response['_view']))
 				$view = $response['_view'];
 				
-			return $this->twig->render($controller.'/'.$view.'.html', $response);
+			return $this->twig->render($controller.'/'.$view.'.twig', $response);
 		}
 		return $response;
 	}
