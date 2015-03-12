@@ -4,15 +4,14 @@ namespace Adserver\Controllers;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class HomeController extends BaseController {
-		
-	protected $title = 'Dashboard';
-	protected $code  = 'home';
+class HomeController extends SecuredController {
 	
-	public function indexAction(){
+	protected $code='home';
 	
-		return $this->response(__FUNCTION__);
+	protected $titolo='Dashboard';
 		
+	protected function indexAction(Request $request){
+
 	}
 	
 }

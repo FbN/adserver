@@ -93,8 +93,16 @@ $controllers = array(
 );
 foreach ($controllers as $cc){
 	$app['controllers.'.$cc] = function($c) use ($cc){
-		$claz = "\\Agents\\Controllers\\".ucfirst($cc)."Controller";
-		return new $claz($app);
+		$claz = "\\Adserver\\Controllers\\".ucfirst($cc)."Controller";
+		return new $claz(
+			$c['url_generator'],
+			$c['orm.em'],
+			$c['alerts'],
+			$c['twig'],
+			$c['config'],
+			$c['security'],
+			$c['security.encoder_factory']
+		);
 	};	
 }
 // ====================

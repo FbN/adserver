@@ -16,7 +16,8 @@ $app['console'] = function () use ($app) {
 
 	$helperSet = new \Symfony\Component\Console\Helper\HelperSet(array(
 			'db' => new \Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper( $app['dbs']['default'] ),
-			'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper( $app['orm.em'] )
+			'em' => new \Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper( $app['orm.em'] ),
+			'app' => new \Fbn\Silex\ApplicationConsoleHelper($app)
 	));
 	
 	$console->setHelperSet($helperSet);
@@ -37,8 +38,7 @@ $app['console'] = function () use ($app) {
 };
 
 \Doctrine\ORM\Tools\Console\ConsoleRunner::addCommands($app['console']);
-$app['command.agents.password'] = function ($app) { return new \Agents\Commands\Password(); };
-
+$app['console']->add(new \Adserver\Commands\Password());
 // ===============
 
 $app['console']->run();

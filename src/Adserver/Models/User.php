@@ -83,7 +83,11 @@ class User extends \Fbn\Doctrine\SmartModel
      */
     protected $loginTime;
 
-    //protected $customers;
+    /**
+     * @ORM\ManyToMany(targetEntity="Campaign", inversedBy="userList")
+     * @ORM\JoinTable(name="user_campaign")
+     **/
+    protected $campaignList;
     
     public function getRoleList(){
     	if(!$this->role) return array();
@@ -110,7 +114,7 @@ class User extends \Fbn\Doctrine\SmartModel
     	$this->creationTime = new \DateTime();
     	$this->loginTime = $this->creationTime;
     	$this->setRoleList(array(self::ROLE_AGENT));
-    	//$this->customers = new \Doctrine\Common\Collections\ArrayCollection();
+    	$this->campaignList = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     public function getLabel(){

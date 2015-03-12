@@ -127,13 +127,13 @@ final class Principal implements AdvancedUserInterface {
     public function getId(){
     	return $this->id;
     }
-/*    
+  
     public function isGrantedAdmin(){    	
-    	return in_array(\ApiMart\Models\B2bUser::ROLE_ADMIN, $this->roles);
+    	return in_array(\Adserver\Models\User::ROLE_ADMIN, $this->roles);
     }
     
     public function isGrantedAgent(){
-    	return in_array(\ApiMart\Models\B2bUser::ROLE_AGENT, $this->roles);
+    	return in_array(\Adserver\Models\User::ROLE_CUSTOMER, $this->roles);
     }
     
     public function assertGrantedAdmin(){
@@ -144,8 +144,8 @@ final class Principal implements AdvancedUserInterface {
     
     public function assertGrantedAgent(){
     	if(!$this->isGrantedAgent()){
-    		throw new AccessDeniedException('You are not Agent or Admin');
+    		throw new AccessDeniedException('You are not allowed');
     	}
-    }*/
+    }
     
 }
