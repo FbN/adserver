@@ -51,7 +51,7 @@ class Campaign extends \Fbn\Doctrine\SmartModel
      *
      * @ORM\Column(name="delivered", type="integer")
      */
-    protected $delived=0;
+    protected $delivered=0;
         
     /**
      * @ORM\ManyToMany(targetEntity="User", mappedBy="campaignList")

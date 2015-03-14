@@ -22,23 +22,12 @@ $app['console'] = function () use ($app) {
 	
 	$console->setHelperSet($helperSet);
 	
-	foreach ($app->keys() as $key) {
-		if (false === strpos($key, 'command.')) {
-			continue;
-		}
-
-		$command = $app[$key];
-
-		if ($command instanceof Command) {
-			$console->add($command);
-		}
-	}
-	
 	return $console;
 };
 
 \Doctrine\ORM\Tools\Console\ConsoleRunner::addCommands($app['console']);
-$app['console']->add(new \Adserver\Commands\Password());
+$app['console']->add(new \Adserver\Commands\Password(null, $app));
+$app['console']->add(new \Adserver\Commands\Fakefill(null, $app));
 // ===============
 
 $app['console']->run();

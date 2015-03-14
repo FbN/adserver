@@ -9,11 +9,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Util\Debug;
 use Symfony\Component\Security\Core\User\User;
 
-class Password extends Command
+class Password extends AppCommand
 {
-    /**
-     * {@inheritdoc}
-     */
+
     protected function configure()
     {
         $this
@@ -27,14 +25,10 @@ Encrypt a password.
 EOT
         );
     }
-
-    /**
-     * {@inheritdoc}
-     */
+    
     protected function execute(InputInterface $input, OutputInterface $output){
     	
-        $em = $this->getHelper('em')->getEntityManager();
-        $app = $this->getHelper('app')->getApp();
+        $app = $this->app;
 
         if (($password = $input->getArgument('password')) === null) {
             throw new \RuntimeException("You must specify a password to encode.");

@@ -113,8 +113,12 @@ class User extends \Fbn\Doctrine\SmartModel
     public function __construct(){
     	$this->creationTime = new \DateTime();
     	$this->loginTime = $this->creationTime;
-    	$this->setRoleList(array(self::ROLE_AGENT));
+    	$this->setRoleList(array(self::ROLE_CUSTOMER));
     	$this->campaignList = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    public function setEncPassword($clean, $encoder){    	
+    	$this->setPassword($encoder->encodePassword($clean, $this->getSalt()));
     }
     
     public function getLabel(){
