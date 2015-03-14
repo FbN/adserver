@@ -247,8 +247,4 @@ class CampaignTimeFilter extends \Fbn\Doctrine\SmartModel
     protected $campaign;
     
     
-    public function __construct() {
-    	$this->userList = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
 }

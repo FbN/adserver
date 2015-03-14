@@ -14,6 +14,14 @@ class Fakefill extends AppCommand
 	
 	private $fake;
 	
+	private $cookieValues = array('cookieval1','cookieval2','cookieval3');
+	private $refererValues = array(
+			'artefice.co',
+			'myfakehost1.com',			
+			'myfakehost2.com',
+			'myfakehost4.com'
+			);
+	
 	const TYPE_OLD = -1;
 	const TYPE_CURRENT = 0;
 	const TYPE_FUTURE = 1;
@@ -76,6 +84,55 @@ EOT
 		return $r;
     }
     
+    protected function cookieFilter($c){
+    	$cf = new \Adserver\Models\CampaignCookieFilter();
+    	$cf->setCookie($this->fake->randomElement($this->cookieValues));
+    	$cf->setCampaign($c);
+    	$c->getCampaignCookieFilterList()->add($cf);
+    	$cf->persist($this->app['orm.em']);
+    	return $cf;
+    }
+    
+    protected function timeFilter($c){
+    	$df = new \Adserver\Models\CampaignTimeFilter();
+    	$df->setDSunday( $this->fake->boolean() );
+    	$df->setDMonday( $this->fake->boolean() );
+    	$df->setDTuesday( $this->fake->boolean() );
+    	$df->setDWednesday( $this->fake->boolean() );
+    	$df->setDWednesday( $this->fake->boolean() );
+    	$df->setDThursday( $this->fake->boolean() );
+    	$df->setDFriday( $this->fake->boolean() );
+    	$df->setDSaturday( $this->fake->boolean() );
+    	for($i=0;$i<24;$i++){
+    		$df->{'setH'.$i}( $this->fake->boolean() );
+    	}
+    	$df->setCampaign($c);
+    	$c->getCampaignTimeFilterList()->add($df);
+    	$df->persist($this->app['orm.em']);
+    	return $df;
+    }
+    
+    protected function refererFilter($c){
+    	$r = new \Adserver\Models\CampaignRefererFilter();
+    	$r->setReferer('http://www.'.$this->fake->randomElement($this->refererValues).'/'.$this->fake->lexify('??????/?????.php'));
+    	$r->setHostnameOnly($this->fake->boolean(25));    	
+    	$r->setCampaign($c);
+    	$c->getCampaignRefererFilterList()->add($r);
+    	$r->persist($this->app['orm.em']);
+    	return $r;
+     }
+     
+    protected function banner($c){
+    	$b = new \Adserver\Models\Banner();
+    	$b->setName($this->fake->sentence(2));
+    	$b->setCaption($this->fake->sentence(15));
+    	$b->setUrl($this->fake->url);
+    	$b->setCampaign($c);
+    	$c->getBannerList()->add($b);
+    	$b->persist($this->app['orm.em']);
+    	return $b;
+    }
+    
     protected function cleanAll(){
     	$em = $this->app['orm.em'];
     	$meta = $em->getMetadataFactory()->getAllMetadata();
@@ -121,11 +178,29 @@ EOT
         		$this->runtime($c, self::TYPE_CURRENT);
         		$this->runtime($c, self::TYPE_FUTURE);
         		        		
-        		// day/hour targeting        		
+        		// day/hour targeting
+        		if($this->fake->boolean){
+        			$this->timeFilter($c);
+        		}
         		
         		// coockie targeting
+        		if($this->fake->boolean){
+        			$this->cookieFilter($c);
+        		}
         		
         		// referrer targeting        		
+        		if($this->fake->boolean){
+        			$n = $this->fake->randomDigitNotNull();
+        			for ($i=0; $i <= $n; $i++) {
+        				$this->refererFilter($c);
+        			}
+        		}
+        		
+        		// banner
+        		$n = $this->fake->randomDigitNotNull();
+        		for ($i=0; $i <= $n; $i++) {
+        			$this->banner($c);
+        		}
         		
         	}        	
         }

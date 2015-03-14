@@ -27,7 +27,7 @@ class CampaignRefererFilter extends \Fbn\Doctrine\SmartModel
     /** 
      * @var string
      * 
-     * @ORM\Column(name="cookie", type="string") 
+     * @ORM\Column(name="referer", type="string") 
      * */
     protected $referer;
     
@@ -43,9 +43,5 @@ class CampaignRefererFilter extends \Fbn\Doctrine\SmartModel
      **/
     protected $campaign;
     
-    
-    public function __construct() {
-    	$this->userList = new \Doctrine\Common\Collections\ArrayCollection();
-    }
     
 }
