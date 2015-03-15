@@ -15,7 +15,7 @@ class ModelsServiceProvider implements ServiceProviderInterface, BootableProvide
 		\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader(array($app['loader'], 'loadClass'));
 		$app->register(new DoctrineServiceProvider);
 		$app->register(new DoctrineOrmServiceProvider, array(
-				"orm.proxies_dir" => $app['folder']."/resources/cache/proxy",
+				"orm.proxies_dir" => $app['root']."/cache/proxy",
 				"orm.em.options" => array(
 						"mappings" => array(
 								array(

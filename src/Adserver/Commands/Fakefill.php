@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Util\Debug;
 use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class Fakefill extends AppCommand
 {
@@ -54,7 +55,7 @@ EOT
     
     protected function campaign($u){
     	$c = new \Adserver\Models\Campaign();
-    	$c->setName($this->fake->company.' '.$this->fake->randomDigit);
+    	$c->setName($this->fake->company.' '.$this->fake->randomDigit.$this->fake->randomDigit);
     	$c->setActive($this->fake->boolean(80));
     	$c->setGoal($this->fake->numberBetween(500, 10000));
     	$c->getUserList()->add($u);
@@ -85,31 +86,24 @@ EOT
     }
     
     protected function cookieFilter($c){
-    	$cf = new \Adserver\Models\CampaignCookieFilter();
-    	$cf->setCookie($this->fake->randomElement($this->cookieValues));
-    	$cf->setCampaign($c);
-    	$c->getCampaignCookieFilterList()->add($cf);
-    	$cf->persist($this->app['orm.em']);
-    	return $cf;
+    	$c->setCookie($this->fake->randomElement($this->cookieValues));    	
+    	return $c;
     }
     
-    protected function timeFilter($c){
-    	$df = new \Adserver\Models\CampaignTimeFilter();
-    	$df->setDSunday( $this->fake->boolean() );
-    	$df->setDMonday( $this->fake->boolean() );
-    	$df->setDTuesday( $this->fake->boolean() );
-    	$df->setDWednesday( $this->fake->boolean() );
-    	$df->setDWednesday( $this->fake->boolean() );
-    	$df->setDThursday( $this->fake->boolean() );
-    	$df->setDFriday( $this->fake->boolean() );
-    	$df->setDSaturday( $this->fake->boolean() );
+    protected function timeFilter($c){   
+    	$c->setTimeFilterActive(true);
+    	$c->setDSunday( $this->fake->boolean() );
+    	$c->setDMonday( $this->fake->boolean() );
+    	$c->setDTuesday( $this->fake->boolean() );
+    	$c->setDWednesday( $this->fake->boolean() );
+    	$c->setDWednesday( $this->fake->boolean() );
+    	$c->setDThursday( $this->fake->boolean() );
+    	$c->setDFriday( $this->fake->boolean() );
+    	$c->setDSaturday( $this->fake->boolean() );
     	for($i=0;$i<24;$i++){
-    		$df->{'setH'.$i}( $this->fake->boolean() );
-    	}
-    	$df->setCampaign($c);
-    	$c->getCampaignTimeFilterList()->add($df);
-    	$df->persist($this->app['orm.em']);
-    	return $df;
+    		$c->{'setH'.$i}( $this->fake->boolean() );
+    	}    	
+    	return $c;
     }
     
     protected function refererFilter($c){
@@ -164,11 +158,15 @@ EOT
      */
     protected function execute(InputInterface $input, OutputInterface $output){
     	
+    	
         $this->fake = \Faker\Factory::create();
         
         $this->cleanAll();
-     
-        for($i=0; $i<10; $i++){
+        
+        $userN = 100;
+        $progress = new ProgressBar($output, $userN);
+        $progress->start();
+        for($i=0; $i<$userN; $i++){
         	$u = $this->user();
         	for($j=0; $j<10; $j++){
         		$c = $this->campaign($u);
@@ -191,21 +189,24 @@ EOT
         		// referrer targeting        		
         		if($this->fake->boolean){
         			$n = $this->fake->randomDigitNotNull();
-        			for ($i=0; $i <= $n; $i++) {
+        			for ($j=0; $j <= $n; $j++) {
         				$this->refererFilter($c);
         			}
         		}
         		
         		// banner
         		$n = $this->fake->randomDigitNotNull();
-        		for ($i=0; $i <= $n; $i++) {
+        		for ($k=0; $k <= $n; $k++) {
         			$this->banner($c);
         		}
         		
-        	}        	
+        	}
+        	$this->app['orm.em']->flush();
+        	$progress->advance();
         }
-        
+        $progress->finish();
         $this->app['orm.em']->flush();
+        echo "\n";
          
     }
     

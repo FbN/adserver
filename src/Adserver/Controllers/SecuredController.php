@@ -7,7 +7,7 @@ use Nette\Forms\Controls;
 use Nette\Forms\Form;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class SecuredController extends BaseController {
+abstract class SecuredController extends BaseController {
 	
 	/**
 	 * 

@@ -48,6 +48,9 @@ $app['security.userProvider'] =  function($c){
 };
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 		'security.firewalls' => array(
+			'deliver' => array(
+				'pattern' => '^/deliver'
+			),
 		    'admin' => array(
 		        'pattern' => '^(?!\/signIn)',
 		        //'http' => true,
@@ -105,28 +108,19 @@ foreach ($controllers as $cc){
 		);
 	};	
 }
+$app['controllers.deliver'] = function($c){
+	return new \Adserver\Controllers\DeliverController(
+			$c['url_generator'],
+			$c['orm.em'],
+			$c['config']
+	);
+};
 // ====================
 
 
 // === Routing ===
 $app->get('/', "controllers.home:indexAction");
-
-// $app->get('/agent', "controllers.agents:indexAction")->bind('agents');
-// $app->post('/agent/delete', "controllers.agents:deleteAction")->bind('agents.delete');
-// $app->get('/agent/create', "controllers.agents:createAction")->bind('agents.create');
-// $app->post('/agent/create', "controllers.agents:createAction");
-// $app->get('/agent/{id}', "controllers.agents:editAction")->bind('agents.edit');
-// $app->post('/agent/{id}', "controllers.agents:editAction");
-// $app->get('/agent/{id}/customers', "controllers.agents:indexCustomersAction")->bind('agents.customers');
-// $app->post('/agent/{id}/customers/{cid}', "controllers.agents:addCustomersAction")->bind('agents.customers.add');
-// $app->post('/agent/{id}/customers.delete', "controllers.agents:deleteCustomersAction")->bind('agents.customers.delete');
-
-// $app->get('/customer', "controllers.customers:indexAction")->bind('customers');
-// $app->get('/customer/search', "controllers.customers:searchAction")->bind('customers.search'); //json
-// $app->get('/customer/{id}/login', "controllers.customers:loginAction")->bind('customers.login');
-
-// $app->get('/order', "controllers.orders:indexAction")->bind('orders');
-
+$app->get('/deliver', "controllers.deliver:indexAction");
 
 return $app;
 
