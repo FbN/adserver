@@ -310,6 +310,10 @@ class Campaign extends \Fbn\Doctrine\SmartModel
      **/
     protected $campaignRefererFilterList;
     
+    public function incDelivered(){
+    	$this->_onPropertyChanged('delivered', $this->delivered, ++$this->delivered);
+    }
+    
     public function __construct() {
     	$this->userList = new ArrayCollection();
     	$this->campaignRuntimeList = new ArrayCollection();

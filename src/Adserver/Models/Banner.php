@@ -113,8 +113,7 @@ EOT;
     	$rsm->addRootEntityFromClassMetadata('\\Adserver\\Models\\Banner', 'b');
     	$banner = $query->getSingleResult();
     	
-    	die(var_dump($banner));
-    	//$users = $query->getResult();
+    	return $banner;
     	
     }
     
