@@ -7,11 +7,12 @@ use \Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation as SERIALIZER;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Doctrine\ORM\EntityManager;
 
 /**
  * User
  *
- * @ORM\Table(name="banner")
+ * @ORM\Table(name="banner",indexes={@ORM\Index(name="search_width", columns={"width"}), @ORM\Index(name="search_height", columns={"height"})})
  * @ORM\Entity(repositoryClass="Fbn\Doctrine\SmartRepository")
  * @ORM\ChangeTrackingPolicy("NOTIFY")
  */
@@ -49,9 +50,27 @@ class Banner extends \Fbn\Doctrine\SmartModel
     protected $url;
     
     /**
+     * @var string
+     *
+     * @ORM\Column(name="width", type="integer")
+     */
+    protected $width;
+    
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="height", type="integer")
+     */
+    protected $height;    
+    
+    /**
      * @ORM\ManyToOne(targetEntity="Campaign", inversedBy="bannerList")
      **/
     protected $campaign;
+    
+    public function getBanner(){
+    	return "http://lorempixel.com/".$this->width."/".$this->height."/";
+    }
     
     static private function parseDomain($url){
     	if($url==null) return null;
@@ -59,7 +78,12 @@ class Banner extends \Fbn\Doctrine\SmartModel
     	return $parse['host'];
     }
     
-    static function deliverNext(\Doctrine\ORM\EntityManager $em, $cookie=null, $referer=null){
+    public function incDelivered(EntityManager $em){
+    	$campaignTable = $em->getClassMetadata('\\Adserver\\Models\\Campaign')->getTableName();    	
+    	$em->getConnection()->executeUpdate('UPDATE '.$campaignTable.' SET delivered = delivered+1 WHERE id = ?', array($this->getCampaign()->getId()));    	
+    }
+    
+    static function deliverNext(\Doctrine\ORM\EntityManager $em, $width, $height, $cookie=null, $referer=null){
     	
     	$now = new \DateTime();
     	    	
@@ -92,6 +116,7 @@ class Banner extends \Fbn\Doctrine\SmartModel
 				                                        rf.hostname_only=false
 				                              AND       rf.referer = :refererfull) ))
 				AND (c.id=b.campaign_id)
+    			AND ( b.width=:width AND b.height=:height )
 EOT;
     	
     	$rsm = new ResultSetMapping();
@@ -100,6 +125,8 @@ EOT;
     	$query->setParameter('cookie', $cookie);
     	$query->setParameter('refererfull', $referer);
     	$query->setParameter('refererdomain', self::parseDomain($referer));
+    	$query->setParameter('width', $width);
+    	$query->setParameter('height', $height);
     	$rsm->addScalarResult('tot','tot');
     	$tot = $query->getSingleResult()['tot'];
     	
@@ -108,6 +135,8 @@ EOT;
     	$query = $em->createNativeQuery("SELECT b.* ".$sql. " LIMIT $rand,1", $rsm);
     	$query->setParameter('now', $now);
     	$query->setParameter('cookie', $cookie);
+    	$query->setParameter('width', $width);
+    	$query->setParameter('height', $height);
     	$query->setParameter('refererfull', $referer);
     	$query->setParameter('refererdomain', self::parseDomain($referer));
     	$rsm->addRootEntityFromClassMetadata('\\Adserver\\Models\\Banner', 'b');

@@ -308,11 +308,7 @@ class Campaign extends \Fbn\Doctrine\SmartModel
     /**
      * @ORM\OneToMany(targetEntity="CampaignRefererFilter", mappedBy="campaign")
      **/
-    protected $campaignRefererFilterList;
-    
-    public function incDelivered(){
-    	$this->_onPropertyChanged('delivered', $this->delivered, ++$this->delivered);
-    }
+    protected $campaignRefererFilterList;    
     
     public function __construct() {
     	$this->userList = new ArrayCollection();

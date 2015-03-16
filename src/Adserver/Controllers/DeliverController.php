@@ -42,17 +42,18 @@ class DeliverController {
 	public function indexAction(Request $request, \Fbn\Silex\FbnApp $app){
 		$em = $this->em;
 		
-		$em->getConnection()->beginTransaction();
+		//$em->getConnection()->beginTransaction();
 		
-		$b = Banner::deliverNext($em, null, null);		
+		$b = Banner::deliverNext($em, 100, 300, null, null);		
 		
 		$app->finish(function()use($b, $em){
-			$b->getCampaign()->incDelivered();
-			$em->flush();
-			$em->getConnection()->commit();
+			$b->incDelivered($em);
+			//$em->flush();
+			//$em->getConnection()->commit();
 		});
 		
 		return $response = new JsonResponse(array(
+				'banner' => $b->getBanner(),
 				'name' => $b->getName(),
 				'caption' => $b->getCaption(),
 				'url' => $b->getUrl()

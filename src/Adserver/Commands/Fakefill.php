@@ -121,6 +121,8 @@ EOT
     	$b->setName($this->fake->sentence(2));
     	$b->setCaption($this->fake->sentence(15));
     	$b->setUrl($this->fake->url);
+    	$b->setHeight($this->fake->randomElement(array(100,200,300,500)));
+    	$b->setWidth($this->fake->randomElement(array(100,200,300,500)));
     	$b->setCampaign($c);
     	$c->getBannerList()->add($b);
     	$b->persist($this->app['orm.em']);
