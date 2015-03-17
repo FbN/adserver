@@ -4,7 +4,7 @@ namespace Fbn\Doctrine;
 
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\Collection;
-use Fbn\Utils\RoutedUrl;
+use Fbn\Silex\RoutedUrl;
 use Doctrine\Common\Collections\ArrayCollection;
 
 interface PaginatorInterface {
@@ -26,12 +26,12 @@ interface PaginatorInterface {
 	 * @param unknown $routedUrl
 	 * @return array
 	 */
-	public function getPaging( \Fbn\Utils\RoutedUrl $routedUrl);
+	public function getPaging( \Fbn\Silex\RoutedUrl $routedUrl);
 
 	/**
 	 * @param unknown $routedUrl
 	 * @param unknown $urlGenerator
 	 */
-	public function renderPaging( \Fbn\Utils\RoutedUrl $routedUrl, \Symfony\Component\Routing\Generator\UrlGeneratorInterface  $urlGenerator);
+	public function renderPaging( \Fbn\Silex\RoutedUrl $routedUrl, \Symfony\Component\Routing\Generator\UrlGeneratorInterface  $urlGenerator);
 
 }

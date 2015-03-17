@@ -3,7 +3,7 @@ namespace Fbn\Doctrine;
 
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\Collection;
-use Fbn\Utils\RoutedUrl;
+use Fbn\Silex\RoutedUrl;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class TimelinePaginator implements PaginatorInterface {
@@ -109,7 +109,7 @@ class TimelinePaginator implements PaginatorInterface {
 		return $this->collection;
 	}
 	
-	public function getPaging( \Fbn\Utils\RoutedUrl $routedUrl){
+	public function getPaging( \Fbn\Silex\RoutedUrl $routedUrl){
 		$collection = $this->getCollection();
 		$n = $this->getNextUntill($collection);
 		$p = $this->getPrevSince($collection);
@@ -131,7 +131,7 @@ class TimelinePaginator implements PaginatorInterface {
 		);
 	}
 	
-	public function renderPaging( \Fbn\Utils\RoutedUrl $routedUrl, \Symfony\Component\Routing\Generator\UrlGeneratorInterface  $urlGenerator){
+	public function renderPaging( \Fbn\Silex\RoutedUrl $routedUrl, \Symfony\Component\Routing\Generator\UrlGeneratorInterface  $urlGenerator){
 		$paging = $this->getPaging($routedUrl);		
 		$paging['next'] = $paging['next']?$paging['next']->render($urlGenerator):null;
 		$paging['prev'] = $paging['prev']?$paging['prev']->render($urlGenerator):null;

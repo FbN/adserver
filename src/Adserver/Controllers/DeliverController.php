@@ -29,12 +29,12 @@ class DeliverController {
 	protected $config;
 	
 	public function __construct(
-			\Symfony\Component\Routing\Generator\UrlGenerator $urlgenerator,
+			\Symfony\Component\Routing\Generator\UrlGenerator $urlGenerator,
 			\Doctrine\ORM\EntityManager $em,
 			array $config			
 			) {		
 		
-		$this->urlgenerator = $urlgenerator;
+		$this->urlGenerator = $urlGenerator;
 		$this->em = $em;
 		$this->config = $config;				
 	}

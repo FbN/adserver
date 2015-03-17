@@ -92,7 +92,7 @@ $app->after(function ( $request,  $response) use ($app) {
 
 // === Controllers ====
 $controllers = array(
-	'home', 'agents', 'customers', 'orders'
+	'home', 'campaign'
 );
 foreach ($controllers as $cc){
 	$app['controllers.'.$cc] = function($c) use ($cc){
@@ -119,8 +119,18 @@ $app['controllers.deliver'] = function($c){
 
 
 // === Routing ===
-$app->get('/', "controllers.home:indexAction");
-$app->get('/deliver', "controllers.deliver:indexAction");
+
+// dashboard
+$app->get('/', "controllers.home:indexAction")->bind('home.index');
+
+// deliver
+$app->get('/deliver', "controllers.deliver:indexAction")->bind('deliver.index');
+
+// campaign
+$app->get('/campaign', "controllers.campaign:indexAction")->bind('campaign.index');
+$app->get('/campaign/create', "controllers.campaign:createAction")->bind('campaign.create');
+//$app->get('/campaign/edit/{id}', "controllers.campaign:editAction")->bind('campaign.edit');
+$app->match('/campaign/edit/{id}', "controllers.campaign:editAction")->method('GET|POST')->bind('campaign.edit');
 
 return $app;
 

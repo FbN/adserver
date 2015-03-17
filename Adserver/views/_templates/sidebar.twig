@@ -11,6 +11,7 @@
 		</div>
 	</form>
 	<ul class="sidebar-menu">
-		<li {% if code=='home' %}class="active"{% endif %} ><a href="/"> <i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>		
+		<li {% if code=='home' %}class="active"{% endif %} ><a href="/"> <i class="fa fa-dashboard"></i> <span>Dashboard</span></a></li>
+		<li {% if code=='campaign' %}class="active"{% endif %} ><a href="{{ url('campaign.index') }}"> <i class="fa fa-dashboard"></i> <span>Campaign</span></a></li>		
 	</ul>
 </section>
