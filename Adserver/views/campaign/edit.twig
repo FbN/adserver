@@ -1,5 +1,90 @@
 {% extends "_layout/main.twig" %}
 {% block title %}Edit Campaign{% endblock %}
 {% block body %}
-{{ form|raw }}
+
+<div role="tabpanel">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#campaing-tab" aria-controls="home" role="tab" data-toggle="tab">Campaign</a></li>
+    <li role="presentation"><a href="#runtime-tab" aria-controls="profile" role="tab" data-toggle="tab">Runtimes</a></li>
+    <li role="presentation"><a href="#referer-tab" aria-controls="profile" role="tab" data-toggle="tab">Referer Filters</a></li>
+    <li role="presentation"><a href="#banner-tab" aria-controls="profile" role="tab" data-toggle="tab">Banners</a></li>
+  </ul>
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="campaing-tab">
+    	{{ form|raw }}
+    </div>
+    <div role="tabpanel" class="tab-pane" id="runtime-tab">
+		<form role="form" class="list" method="POST" >
+			<table class="table table-hover">
+					<tbody>
+						<tr>
+							<th><input id="checkall"  type="checkbox"/></th>
+							<th class="formCell">From</th>
+							<th class="formCell ">To</th>
+							<th class="formCell">&nbsp;</th>
+						</tr>
+						{% for r in campaignRuntimeList %}
+			    			<tr>
+			    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ r.getId() }}"/></td>							
+								<td class="formCell">{{ r.getStart()|date(null, timezone="Europe/Berlin") }}</td>
+								<td class="formCell">{{ r.getEnd()|date(null, timezone="Europe/Berlin") }}</td>							
+								<td class="formCell"><a href="{{ url('campaign.edit', {'id': r.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+							</tr>
+			    		{% endfor %}
+					</tbody>
+			</table>
+		</form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="referer-tab">
+		<form role="form" class="list" method="POST" >
+			<table class="table table-hover">
+					<tbody>
+						<tr>
+							<th><input id="checkall"  type="checkbox"/></th>
+							<th class="formCell">Url</th>
+							<th class="formCell ">Only Host</th>
+							<th class="formCell">&nbsp;</th>
+						</tr>
+						{% for r in campaignRefererFilterList %}
+			    			<tr>
+			    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ r.getId() }}"/></td>							
+								<td class="formCell">{{ r.getReferer() }}</td>
+								<td class="formCell">{{ r.getHostnameOnly() }}</td>							
+								<td class="formCell"><a href="{{ url('campaign.edit', {'id': r.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+							</tr>
+			    		{% endfor %}
+					</tbody>
+			</table>
+		</form>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="banner-tab">
+		<form role="form" class="list" method="POST" >
+			<table class="table table-hover">
+					<tbody>
+						<tr>
+							<th><input id="checkall"  type="checkbox"/></th>
+							<th class="formCell">Name</th>
+							<th class="formCell">Url</th>
+							<th class="formCell">Width</th>
+							<th class="formCell">Height</th>
+							<th class="formCell">&nbsp;</th>
+						</tr>
+						{% for b in bannerList %}
+			    			<tr>
+			    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ b.getId() }}"/></td>							
+								<td class="formCell">{{ b.getName() }}</td>
+								<td class="formCell"><a href="{{ b.getUrl() }}">go</a></td>
+								<td class="formCell">{{ b.getWidth() }}</td>
+								<td class="formCell">{{ b.getHeight() }}</td>							
+								<td class="formCell"><a href="{{ url('campaign.edit', {'id': b.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+							</tr>
+			    		{% endfor %}
+					</tbody>
+			</table>
+		</form>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}

@@ -146,8 +146,11 @@ class CampaignController extends SecuredController {
 		}
 		
 		return array(
-						'breadcrumb' => $this->getBreadcrumb()+array(($res->getName())=>$selfUrl),
-						'form' => $form
+			'breadcrumb' => $this->getBreadcrumb()+array(($res->getName())=>$selfUrl),
+			'form' => $form,
+			'campaignRuntimeList' => $res->getCampaignRuntimeList(),
+			'campaignRefererFilterList' => $res->getCampaignRefererFilterList(),
+			'bannerList' => $res->getBannerList()
 		);
 	}
 	
