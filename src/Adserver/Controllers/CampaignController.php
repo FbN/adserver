@@ -64,20 +64,55 @@ class CampaignController extends SecuredController {
 		
 		$form = new Form();				
 		$form->setAction($selfUrl);
+		
+		$form->addGroup('Campaign');
 		$form->addHidden('id');
 		$form->addText('name', 'Name:')
 			->setRequired('Name is required');			
 		$form->addCheckbox('active', 'Active:');
 		$form->addText('goal', 'Goal:')
 			->setRequired('Gaol is required');
+		$form->addCheckbox('timeFilterActive', 'Active Day/Hour filter:');		
+		
+		$form->addGroup('Day Filter');
+		$form->addCheckbox('dSunday', 'Sunday:');
+		$form->addCheckbox('dMonday', 'Monday:');
+		$form->addCheckbox('dTuesday', 'Tuesday:');
+		$form->addCheckbox('dWednesday', 'Wednesday:');
+		$form->addCheckbox('dThursday', 'Thursday:');
+		$form->addCheckbox('dFriday', 'Friday:');
+		$form->addCheckbox('dSaturday', 'Saturday:');
+		$form->addGroup('Hour Filter');
+		for($i=0;$i<24;$i++){
+			$form->addCheckbox('h'.$i, 'Hour '.$i);
+		}
+		
+		$form->addGroup('Cookie filter');
+		$form->addText('cookie', 'Cookie value (clear for disable filter):');
+		
 		$form->addSubmit('send', 'Save');
 		
-		$form->setDefaults(array(
+		$defaults = array(
 				'id' => $res->getId(),
 				'name' => $res->getName(),
 				'active' => $res->getActive(),
-				'goal' => $res->getGoal()
-		));
+				'goal' => $res->getGoal(),
+				'timeFilterActive' => $res->getTimeFilterActive(),
+				'dSunday' => $res->getDSunday(),
+				'dMonday' => $res->getDMonday(),
+				'dTuesday' => $res->getDTuesday(),
+				'dWednesday' => $res->getDWednesday(),
+				'dThursday' => $res->getDThursday(),
+				'dFriday' => $res->getDFriday(),
+				'dSaturday' => $res->getDSaturday(),
+				'cookie' => $res->getCookie(),
+				
+		);
+		for($i=0;$i<24;$i++){
+			$defaults['h'.$i] = $res->{'getH'.$i}();
+		}
+		
+		$form->setDefaults($defaults);
 		
 		$this->bootstrapForm($form);
 		
@@ -90,6 +125,20 @@ class CampaignController extends SecuredController {
 			$res->setName($values['name']);
 			$res->setActive($values['active']);
 			$res->setGoal($values['goal']);
+			
+			$res->setTimeFilterActive($values['timeFilterActive']);
+			$res->setDSunday($values['dSunday']);
+			$res->setDMonday($values['dMonday']);
+			$res->setDTuesday($values['dTuesday']);
+			$res->setDWednesday($values['dWednesday']);
+			$res->setDThursday($values['dThursday']);
+			$res->setDFriday($values['dFriday']);
+			$res->setDSaturday($values['dSaturday']);
+			$res->setCookie($values['cookie']);
+			for($i=0;$i<24;$i++){
+				$res->{'setH'.$i}($values['h'.$i]);
+				
+			}
 			
 			$this->alerts->addInfo('Campaign updated');
 			
