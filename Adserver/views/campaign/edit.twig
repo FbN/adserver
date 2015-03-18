@@ -59,6 +59,14 @@
     </div>
     <div role="tabpanel" class="tab-pane" id="banner-tab">
 		<form role="form" class="list" method="POST" >
+			<div class="row">	
+				<div class="col-sm-12 text-right">
+					<div class="btn-group">
+		            	<a id="multiDelete" class="btn btn-default btn-flat" href="javascript:;"><i class="fa fa-trash-o"></i></a>
+		            	<a class="btn btn-default btn-flat" href="{{ url('campaign.create') }}"><i class="fa fa-plus-square"></i></a>            	
+		           	</div>	           	
+				</div>
+			</div>
 			<table class="table table-hover">
 					<tbody>
 						<tr>
@@ -76,7 +84,7 @@
 								<td class="formCell"><a href="{{ b.getUrl() }}">go</a></td>
 								<td class="formCell">{{ b.getWidth() }}</td>
 								<td class="formCell">{{ b.getHeight() }}</td>							
-								<td class="formCell"><a href="{{ url('campaign.edit', {'id': b.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+								<td class="formCell"><a href="{{ url('banner.edit', {'id': b.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
 							</tr>
 			    		{% endfor %}
 					</tbody>

@@ -52,7 +52,7 @@ class DeliverController {
 			//$em->getConnection()->commit();
 		});
 		
-		return $response = new JsonResponse(array(
+		return new JsonResponse(array(
 				'banner' => $b->getBanner(),
 				'name' => $b->getName(),
 				'caption' => $b->getCaption(),

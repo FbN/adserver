@@ -38,3 +38,4 @@ Adserver/config.php
 .project
 composer.lock
 cache
+banners/*

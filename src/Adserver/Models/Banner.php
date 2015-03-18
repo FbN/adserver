@@ -52,6 +52,13 @@ class Banner extends \Fbn\Doctrine\SmartModel
     /**
      * @var string
      *
+     * @ORM\Column(name="file", type="string", length=25)
+     */
+    protected $file;
+    
+    /**
+     * @var string
+     *
      * @ORM\Column(name="width", type="integer")
      */
     protected $width;
