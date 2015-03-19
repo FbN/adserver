@@ -44,7 +44,10 @@ class DeliverController {
 		
 		//$em->getConnection()->beginTransaction();
 		
-		$b = Banner::deliverNext($em, $request->query->get('w'), $request->query->get('h'), null, null);		
+		$cookie = $request->query->get('cookie');
+		$cookie = $cookie&&$cookie!='undefined'?$cookie:null;
+		$referer = $request->query->get('referer')?$request->query->get('referer'):null;
+		$b = Banner::deliverNext($em, $request->query->get('w'), $request->query->get('h'), $cookie, $referer);		
 		
 		$app->finish(function()use($b, $em){
 			$b->incDelivered($em);
