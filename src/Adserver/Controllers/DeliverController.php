@@ -44,20 +44,23 @@ class DeliverController {
 		
 		//$em->getConnection()->beginTransaction();
 		
-		$b = Banner::deliverNext($em, 100, 300, null, null);		
+		$b = Banner::deliverNext($em, $request->query->get('w'), $request->query->get('h'), null, null);		
 		
 		$app->finish(function()use($b, $em){
 			$b->incDelivered($em);
 			//$em->flush();
 			//$em->getConnection()->commit();
 		});
-		
-		return new JsonResponse(array(
+		$body=array(
 				'banner' => $b->getBanner(),
 				'name' => $b->getName(),
 				'caption' => $b->getCaption(),
 				'url' => $b->getUrl()
-			));
+		);
+		if($request->query->has('jsonp')){
+			return $request->query->get('jsonp')."(".json_encode($body).");"; 
+		}
+		return new JsonResponse($body);
 	}
 	
 	
