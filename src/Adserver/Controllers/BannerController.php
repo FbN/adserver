@@ -9,6 +9,7 @@ use Adserver\Models\Banner;
 use Nette\Forms\Form;
 use Nette\Forms\Controls;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class BannerController extends SecuredController {
 	
@@ -27,6 +28,16 @@ class BannerController extends SecuredController {
 		if(!$res){
 			throw new HttpException(404, 'Resource '.$id.' not found');
 		}
+		
+		//restrict to user
+		$qb = $this->em
+		->createQueryBuilder()
+		->select('count(x)')
+		->from('\\Adserver\\Models\\Campaign', 'x')
+		->leftJoin('x.userList', 'u');
+		$qb->andWhere($qb->expr()->eq('x.id', $res->getCampaign()->getId()));
+		$qb->andWhere($qb->expr()->eq('u.id', $this->security->getToken()->getUser()->getId()));
+		if(!$qb->getQuery()->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_SINGLE_SCALAR)) throw new AccessDeniedException();
 		
 		$selfUrl = $this->urlGenerator->generate('banner.edit', array('id'=>$id));
 		

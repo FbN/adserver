@@ -8,6 +8,7 @@ use Fbn\Doctrine\PagePaginator;
 use Adserver\Models\Campaign;
 use Nette\Forms\Form;
 use Nette\Forms\Controls;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class CampaignController extends SecuredController {
 	
@@ -41,6 +42,10 @@ class CampaignController extends SecuredController {
 			$routedUrl['q'] = $search;
 		}
 		
+		//restrict to user
+		$qb->leftJoin('x.userList', 'u')
+		   ->andWhere($qb->expr()->eq('u.id', $this->security->getToken()->getUser()->getId()));
+		
 		$paginator = new PagePaginator($qb, $this->pagesize, $request);
 		
 		return array(
@@ -59,6 +64,16 @@ class CampaignController extends SecuredController {
 		if(!$res){
 			throw new HttpException(404, 'Resource '.$id.' not found');
 		}
+		
+		//restrict to user
+		$qb = $this->em
+			->createQueryBuilder()
+			->select('count(x)')
+			->from('\\Adserver\\Models\\Campaign', 'x')
+			->leftJoin('x.userList', 'u');
+		$qb->andWhere($qb->expr()->eq('x.id', $res->getId()));
+		$qb->andWhere($qb->expr()->eq('u.id', $this->security->getToken()->getUser()->getId()));
+		if(!$qb->getQuery()->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_SINGLE_SCALAR)) throw new AccessDeniedException();
 		
 		$selfUrl = $this->urlGenerator->generate('campaign.edit', array('id'=>$id));
 		
