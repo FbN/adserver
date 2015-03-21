@@ -128,10 +128,12 @@ $app->get('/campaign', "controllers.campaign:indexAction")->bind('campaign.index
 $app->match('/campaign/create', "controllers.campaign:createAction")->method('GET|POST')->bind('campaign.create');
 $app->match('/campaign/edit/{id}', "controllers.campaign:editAction")->method('GET|POST')->bind('campaign.edit');
 $app->match('/campaign/runtime/create/{id}', "controllers.campaign:createCampaginRuntimeAction")->method('GET|POST')->bind('campaignRuntime.create');
+$app->match('/campaign/runtime/edit/{id}', "controllers.campaign:editCampaginRuntimeAction")->method('GET|POST')->bind('campaignRuntime.edit');
 $app->match('/campaign/banner/create/{id}', "controllers.banner:createAction")->method('GET|POST')->bind('banner.create');
 $app->match('/campaign/banner/edit/{id}', "controllers.banner:editAction")->method('GET|POST')->bind('banner.edit');
 $app->post('/campaign/banner/upload', "controllers.banner:uploadAction")->bind('banner.upload');
 $app->match('/campaign/referer/create/{id}', "controllers.campaign:createCampaginRefererAction")->method('GET|POST')->bind('campaignReferer.create');
+$app->match('/campaign/referer/edit/{id}', "controllers.campaign:editCampaginRefererAction")->method('GET|POST')->bind('campaignReferer.edit');
 
 return $app;
 

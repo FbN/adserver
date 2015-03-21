@@ -240,8 +240,8 @@ class CampaignController extends SecuredController {
 		$form->addSubmit('send', 'Save');
 	
 		$form->setDefaults(array(
-				'start' => $res->getEnd()?$res->getEnd()->format('d/m/Y H:i:s'):'',
-				'end' => $res->getStart()?$res->getStart()->format('d/m/Y H:i:s'):'',
+				'start' => $res->getEnd()?$res->getStart()->format('m/d/Y H:i A'):'',
+				'end' => $res->getStart()?$res->getEnd()->format('m/d/Y H:i A'):'',
 				'campaign' => $res->getCampaign()->getId()	
 		));
 	
@@ -288,6 +288,45 @@ class CampaignController extends SecuredController {
 	
 		return array(
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Runtime'=>$selfUrl),
+				'form' => $form
+		);
+	
+	}
+	
+	protected function editCampaginRuntimeAction( Request $request, $id, $_route ){
+	
+		$res = CampaignRuntime::find($this->em, $id);
+	
+		if(!$res){
+			throw new HttpException(404, 'Resource '.$id.' not found');
+		}
+	
+		$campaign=$res->getCampaign();
+		$this->checkCampaignAccess($campaign);
+	
+		$selfUrl = $this->urlGenerator->generate('campaignRuntime.edit', array('id'=>$id));
+	
+		$form = $this->campaignRuntimeForm($res);
+		$form->setAction($selfUrl);
+	
+		if ($form->isSubmitted() && $form->isValid()) {
+	
+			$values = $form->getValues();
+	
+			if($campaign->getId()!=$values['campaign']) { throw new \RuntimeException('Invalid resource ID'); }
+				
+			$format = 'm/d/Y H:i A';
+	
+			$res->setStart(\DateTime::createFromFormat($format, $values['start']));
+			$res->setEnd(\DateTime::createFromFormat($format, $values['end']));
+	
+			$this->alerts->addInfo('Campaign runtime saved');
+	
+			return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())));
+		}
+	
+		return array(
+				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Edit Runtime'=>$selfUrl),
 				'form' => $form
 		);
 	
@@ -346,6 +385,41 @@ class CampaignController extends SecuredController {
 	
 		return array(
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Referer Filter'=>$selfUrl),
+				'form' => $form
+		);
+	
+	}
+	
+	protected function editCampaginRefererAction( Request $request, $id, $_route ){
+	
+		$res = CampaignRefererFilter::find($this->em, $id);
+	
+		if(!$res){
+			throw new HttpException(404, 'Resource '.$id.' not found');
+		}
+	
+		$this->checkCampaignAccess($res->getCampaign());
+	
+		$selfUrl = $this->urlGenerator->generate('campaignReferer.edit', array('id'=>$id));
+	
+		$form = $this->campaignRefererForm($res);
+		$form->setAction($selfUrl);
+	
+		// processing
+		if ($form->isSubmitted() && $form->isValid()) {
+	
+			$values = $form->getValues();
+	
+			$res->setReferer($values['referer']);
+			$res->setHostnameOnly($values['hostnameOnly']);
+	
+			$this->alerts->addInfo('New campaign referer filter saved');
+	
+			return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$res->getCampaign()->getId())));
+		}
+	
+		return array(
+				'breadcrumb' => $this->getBreadcrumb()+array(($res->getCampaign()->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$res->getCampaign()->getId())), 'Edit Referer Filter'=>$selfUrl),
 				'form' => $form
 		);
 	
