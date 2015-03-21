@@ -11,7 +11,6 @@
 			</div>
 			<div class="col-sm-6 text-right">
 				<div class="btn-group">
-	            	<a id="multiDelete" class="btn btn-default btn-flat" href="javascript:;"><i class="fa fa-trash-o"></i></a>
 	            	<a class="btn btn-default btn-flat" href="{{ url('campaign.create') }}"><i class="fa fa-plus-square"></i></a>            	
 	           	</div>	           	
 			</div>
@@ -19,7 +18,7 @@
 		<table class="table table-hover">
 				<tbody>
 					<tr>
-						<th><input id="checkall"  type="checkbox"/></th>
+						<th class="formCell">Id</th>
 						<th class="formCell">Name</th>
 						<th class="formCell ">Goal</th>
 						<th class="formCell ">Delivered</th>
@@ -28,7 +27,7 @@
 					</tr>
 					{% for c in collection %}
 		    			<tr>
-		    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ c.getId() }}"/></td>							
+		    				<td class="formCell">{{ c.getId() }}</td>
 							<td class="formCell">{{ c.getName() }}</td>
 							<td class="formCell">{{ c.getGoal() }}</td>
 							<td class="formCell">{{ c.getDelivered() }}</td>

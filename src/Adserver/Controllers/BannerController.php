@@ -99,6 +99,7 @@ class BannerController extends SecuredController {
 		}
 		
 		return array(
+			'titolo' => 'Campaign '.$res->getCampaign()->getId(),
 			'breadcrumb' => $this->getBreadcrumb()+array(($res->getName())=>$selfUrl),
 			'form' => $form
 		);
@@ -143,6 +144,7 @@ class BannerController extends SecuredController {
 		}
 	
 		return array(
+				'titolo' => 'Campaign '.$id,
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Banner'=>$selfUrl),
 				'form' => $form
 		);

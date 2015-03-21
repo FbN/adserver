@@ -36,7 +36,7 @@
 			    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ r.getId() }}"/></td>							
 								<td class="formCell">{{ r.getStart()|date(null, timezone="Europe/Berlin") }}</td>
 								<td class="formCell">{{ r.getEnd()|date(null, timezone="Europe/Berlin") }}</td>							
-								<td class="formCell"><a href="{{ url('campaignRuntime.edit', {'id': r.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+								<td class="formCell"><a href="{{ url('campaignRuntime.edit', {'id': r.getId()}) }}"><i class="fa fa-pencil-square-o"></i></a></td>
 							</tr>
 			    		{% endfor %}
 					</tbody>
@@ -66,7 +66,7 @@
 			    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ r.getId() }}"/></td>							
 								<td class="formCell">{{ r.getReferer() }}</td>
 								<td class="formCell">{{ r.getHostnameOnly() }}</td>							
-								<td class="formCell"><a href="{{ url('campaignReferer.edit', {'id': r.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+								<td class="formCell"><a href="{{ url('campaignReferer.edit', {'id': r.getId()}) }}"><i class="fa fa-pencil-square-o"></i></a></td>
 							</tr>
 			    		{% endfor %}
 					</tbody>
@@ -100,7 +100,7 @@
 								<td class="formCell"><a href="{{ b.getUrl() }}">go</a></td>
 								<td class="formCell">{{ b.getWidth() }}</td>
 								<td class="formCell">{{ b.getHeight() }}</td>							
-								<td class="formCell"><a href="{{ url('banner.edit', {'id': b.getId()}) }}"><i class="fa fa-angle-right"></i></a></td>
+								<td class="formCell"><a href="{{ url('banner.edit', {'id': b.getId()}) }}"><i class="fa fa-pencil-square-o"></i></a></td>
 							</tr>
 			    		{% endfor %}
 					</tbody>

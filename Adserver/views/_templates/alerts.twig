@@ -1,0 +1,5 @@
+{% if alerts.isAnyAllert() %}
+	{% for a in alerts.getAlerts() %}
+		<div class="alert alert-{{ a[0] }} alert-dismissable" role="alert"><button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button> {{ a[1] }}</div>
+	{% endfor %}
+{% endif %}

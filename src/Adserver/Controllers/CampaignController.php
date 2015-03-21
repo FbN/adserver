@@ -171,6 +171,7 @@ class CampaignController extends SecuredController {
 		}
 		
 		return array(
+			'titolo' => 'Campaign '.$id,
 			'breadcrumb' => $this->getBreadcrumb()+array(($res->getName())=>$selfUrl),
 			'form' => $form,
 			'id'=> $res->getId(),
@@ -287,6 +288,7 @@ class CampaignController extends SecuredController {
 		}
 	
 		return array(
+				'titolo' => 'Campaign '.$id,
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Runtime'=>$selfUrl),
 				'form' => $form
 		);
@@ -326,6 +328,7 @@ class CampaignController extends SecuredController {
 		}
 	
 		return array(
+				'titolo' => 'Campaign '.$campaign->getId(),
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Edit Runtime'=>$selfUrl),
 				'form' => $form
 		);
@@ -384,6 +387,7 @@ class CampaignController extends SecuredController {
 		}
 	
 		return array(
+				'titolo' => 'Campaign '.$campaign->getId(),
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Referer Filter'=>$selfUrl),
 				'form' => $form
 		);
@@ -419,6 +423,7 @@ class CampaignController extends SecuredController {
 		}
 	
 		return array(
+				'titolo' => 'Campaign '.$res->getCampaign()->getId(),
 				'breadcrumb' => $this->getBreadcrumb()+array(($res->getCampaign()->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$res->getCampaign()->getId())), 'Edit Referer Filter'=>$selfUrl),
 				'form' => $form
 		);
