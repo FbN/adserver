@@ -131,6 +131,7 @@ $app->match('/campaign/runtime/create/{id}', "controllers.campaign:createCampagi
 $app->match('/campaign/banner/create/{id}', "controllers.banner:createAction")->method('GET|POST')->bind('banner.create');
 $app->match('/campaign/banner/edit/{id}', "controllers.banner:editAction")->method('GET|POST')->bind('banner.edit');
 $app->post('/campaign/banner/upload', "controllers.banner:uploadAction")->bind('banner.upload');
+$app->match('/campaign/referer/create/{id}', "controllers.campaign:createCampaginRefererAction")->method('GET|POST')->bind('campaignReferer.create');
 
 return $app;
 

@@ -11,6 +11,7 @@ use Nette\Forms\Controls;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Adserver\Models\User;
 use Adserver\Models\CampaignRuntime;
+use Adserver\Models\CampaignRefererFilter;
 
 class CampaignController extends SecuredController {
 	
@@ -287,6 +288,64 @@ class CampaignController extends SecuredController {
 	
 		return array(
 				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Runtime'=>$selfUrl),
+				'form' => $form
+		);
+	
+	}
+	
+	protected function campaignRefererForm($res){
+		$form = new Form();
+	
+		$form->addText('referer', 'Referer url:')
+			->setRequired('Start is required');
+		$form->addCheckbox('hostnameOnly', 'Match hostname only');
+			
+		$form->addSubmit('send', 'Save');
+	
+		$form->setDefaults(array(
+				'referer' => $res->getReferer(),
+				'hostnameOnly' => $res->getHostnameOnly()
+		));
+	
+		return $this->bootstrapForm($form);
+	}
+	
+	protected function createCampaginRefererAction( Request $request, $id, $_route ){
+	
+		$campaign = Campaign::find($this->em, $id);
+	
+		if(!$campaign){
+			throw new HttpException(404, 'Resource '.$id.' not found');
+		}
+	
+		$this->checkCampaignAccess($campaign);
+	
+		$selfUrl = $this->urlGenerator->generate('campaignReferer.create', array('id'=>$id));
+	
+		$res = new CampaignRefererFilter();
+		$res->setCampaign($campaign);
+	
+		$form = $this->campaignRefererForm($res);
+		$form->setAction($selfUrl);
+	
+		// processing
+		if ($form->isSubmitted() && $form->isValid()) {
+	
+			$values = $form->getValues();
+	
+			$res->setReferer($values['referer']);
+			$res->setHostnameOnly($values['hostnameOnly']);
+			$campaign->getCampaignRefererFilterList()->add($res);
+	
+			$res->persist($this->em, true);
+	
+			$this->alerts->addInfo('New campaign referer filter saved');
+	
+			return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())));
+		}
+	
+		return array(
+				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Referer Filter'=>$selfUrl),
 				'form' => $form
 		);
 	
