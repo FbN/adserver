@@ -88,7 +88,8 @@ class Banner extends \Fbn\Doctrine\SmartModel
     
     public function incDelivered(EntityManager $em){
     	$campaignTable = $em->getClassMetadata('\\Adserver\\Models\\Campaign')->getTableName();    	
-    	$em->getConnection()->executeUpdate('UPDATE '.$campaignTable.' SET delivered = delivered+1 WHERE id = ?', array($this->getCampaign()->getId()));    	
+    	$cid = current($em->getUnitOfWork()->getEntityIdentifier($this->getCampaign()));
+    	$em->getConnection()->executeUpdate('UPDATE '.$campaignTable.' SET delivered = delivered+1 WHERE id = ?', array($cid));    	
     }
     
     static function deliverNext(\Doctrine\ORM\EntityManager $em, $width, $height, $cookie=null, $referer=null){
