@@ -114,7 +114,7 @@ class CampaignController extends SecuredController {
 		return $this->bootstrapForm($form);
 	}
 	
-	protected function checkCampaginAccess(Campaign $res){
+	protected function checkCampaignAccess(Campaign $res){
 		$qb = $this->em
 			->createQueryBuilder()
 			->select('count(x)')
@@ -133,7 +133,7 @@ class CampaignController extends SecuredController {
 			throw new HttpException(404, 'Resource '.$id.' not found');
 		}
 				
-		$this->checkCampaginAccess($res);
+		$this->checkCampaignAccess($res);
 		
 		$selfUrl = $this->urlGenerator->generate('campaign.edit', array('id'=>$id));
 		
@@ -255,7 +255,7 @@ class CampaignController extends SecuredController {
 			throw new HttpException(404, 'Resource '.$id.' not found');
 		}
 				
-		$this->checkCampaginAccess($campaign);
+		$this->checkCampaignAccess($campaign);
 		
 		$selfUrl = $this->urlGenerator->generate('campaignRuntime.create', array('id'=>$id));
 		

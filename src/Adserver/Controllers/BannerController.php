@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Fbn\Silex\RoutedUrl;
 use Fbn\Doctrine\PagePaginator;
 use Adserver\Models\Banner;
+use Adserver\Models\Campaign;
 use Nette\Forms\Form;
 use Nette\Forms\Controls;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,29 +21,20 @@ class BannerController extends SecuredController {
 	protected function getBreadcrumb(){
 		return parent::getBreadcrumb()+array( 'Campaign/Banner'=>$this->urlGenerator->generate('campaign.index') );
 	}
-		
-	protected function editAction(Request $request, $id, $_route){
 	
-		$res = Banner::find($this->em, $id);
-		
-		if(!$res){
-			throw new HttpException(404, 'Resource '.$id.' not found');
-		}
-		
-		//restrict to user
+	protected function checkCampaignAccess(Campaign $res){
 		$qb = $this->em
 		->createQueryBuilder()
 		->select('count(x)')
 		->from('\\Adserver\\Models\\Campaign', 'x')
 		->leftJoin('x.userList', 'u');
-		$qb->andWhere($qb->expr()->eq('x.id', $res->getCampaign()->getId()));
+		$qb->andWhere($qb->expr()->eq('x.id', $res->getId()));
 		$qb->andWhere($qb->expr()->eq('u.id', $this->security->getToken()->getUser()->getId()));
 		if(!$qb->getQuery()->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_SINGLE_SCALAR)) throw new AccessDeniedException();
-		
-		$selfUrl = $this->urlGenerator->generate('banner.edit', array('id'=>$id));
-		
-		$form = new Form();					
-		$form->setAction($selfUrl);
+	}
+	
+	protected function bannerForm($res){
+		$form = new Form();
 		
 		$form->addHidden('id');
 		$form->addText('name', 'Name:')
@@ -61,16 +53,32 @@ class BannerController extends SecuredController {
 		$form->addSubmit('send', 'Save');
 		
 		$form->setDefaults(array(
-			'id' => $res->getId(),
-			'name' => $res->getName(),
-			'caption' => $res->getCaption(),
-			'url' => $res->getUrl(),
-			'file' => $res->getFile(),
-			'width' => $res->getWidth(),
-			'height' => $res->getHeight()
+				'id' => $res->getId(),
+				'name' => $res->getName(),
+				'caption' => $res->getCaption(),
+				'url' => $res->getUrl(),
+				'file' => $res->getFile(),
+				'width' => $res->getWidth(),
+				'height' => $res->getHeight()
 		));
 		
-		$this->bootstrapForm($form);
+		return $this->bootstrapForm($form);
+	}
+		
+	protected function editAction(Request $request, $id, $_route){
+	
+		$res = Banner::find($this->em, $id);
+		
+		if(!$res){
+			throw new HttpException(404, 'Resource '.$id.' not found');
+		}
+		
+		$this->checkCampaignAccess($res->getCampaign());
+		
+		$selfUrl = $this->urlGenerator->generate('banner.edit', array('id'=>$id));
+		
+		$form = $this->bannerForm($res);					
+		$form->setAction($selfUrl);
 		
 		if ($form->isSubmitted() && $form->isValid()) {
 			
@@ -94,6 +102,51 @@ class BannerController extends SecuredController {
 			'breadcrumb' => $this->getBreadcrumb()+array(($res->getName())=>$selfUrl),
 			'form' => $form
 		);
+	}				
+			
+	protected function createAction( Request $request, $id, $_route ){
+	
+		$campaign = Campaign::find($this->em, $id);
+	
+		if(!$campaign){
+			throw new HttpException(404, 'Resource '.$id.' not found');
+		}
+	
+		$this->checkCampaignAccess($campaign);
+	
+		$selfUrl = $this->urlGenerator->generate('banner.create', array('id'=>$id));
+	
+		$res = new Banner();
+		$res->setCampaign($campaign);
+	
+		$form = $this->bannerForm($res);
+		$form->setAction($selfUrl);
+	
+		// processing
+		if ($form->isSubmitted() && $form->isValid()) {
+	
+			$values = $form->getValues();
+				
+			$res->setName($values['name']);
+			$res->setCaption($values['caption']);
+			$res->setUrl($values['url']);
+			$res->setFile($values['file']);
+			$res->setWidth($values['width']);
+			$res->setHeight($values['height']);
+			$campaign->getBannerList()->add($res);
+	
+			$res->persist($this->em, true);
+	
+			$this->alerts->addInfo('New banner saved');
+	
+			return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())));
+		}
+	
+		return array(
+				'breadcrumb' => $this->getBreadcrumb()+array(($campaign->getName())=>$this->urlGenerator->generate('campaign.edit', array('id'=>$campaign->getId())), 'Create Banner'=>$selfUrl),
+				'form' => $form
+		);
+	
 	}
 	
 	protected function uploadAction(Request $request, $_route){
