@@ -8,7 +8,8 @@
          "dflydev/doctrine-orm-service-provider": "dev-pimple3 as 2.0.*@dev",
         "twig/twig": "~1.18",
         "symfony/twig-bridge": "~2.6",
-        "fzaninotto/faker": "1.5.*@dev"
+        "fzaninotto/faker": "1.5.*@dev",
+        "phpunit/phpunit": "4.5.*"
     },
     "autoload": {
         "psr-0": {"Adserver\\": "src/","Fbn\\": "src/"}

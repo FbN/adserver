@@ -68,7 +68,7 @@ class CampaignRuntime extends \Fbn\Doctrine\SmartModel
 	    	->getQuery()
 	    	->getOneOrNullResult(\Doctrine\ORM\AbstractQuery::HYDRATE_SCALAR);
 	    
-	    if($overlaps) throw new \RuntimeException("New runtime for campaign ".$this->campaign->getId()." overlaps with runtime ".$overlaps);
+	    if($overlaps) throw new \RuntimeException("New runtime for campaign ".$this->campaign->getId()." overlaps with runtime ".$overlaps['id']);
     }    
     
 }
