@@ -181,6 +181,20 @@ class CampaignController extends SecuredController {
 		);
 	}
 	
+	protected function deleteAction(Request $request, $_route){
+		$i=0;
+		foreach ($request->request->get('ids') as $id){
+			$res = Campaign::find($this->em, $id);
+			$this->checkCampaignAccess($res);
+			if($res){
+				$i++;
+				$res->delete($this->em);
+			}
+		}
+		$this->alerts->addInfo($i.' elements sucessfully deleted');
+		return $this->redirect($this->urlGenerator->generate('campaign.index'));
+	}
+	
 	protected function createAction( Request $request, $_route ){
 	
 		$res = new Campaign();	
@@ -249,7 +263,7 @@ class CampaignController extends SecuredController {
 		return $this->bootstrapForm($form);
 	}
 	
-	protected function createCampaginRuntimeAction( Request $request, $id, $_route ){
+	protected function createCampaignRuntimeAction( Request $request, $id, $_route ){
 	
 		$campaign = Campaign::find($this->em, $id);
 		
@@ -295,7 +309,7 @@ class CampaignController extends SecuredController {
 	
 	}
 	
-	protected function editCampaginRuntimeAction( Request $request, $id, $_route ){
+	protected function editCampaignRuntimeAction( Request $request, $id, $_route ){
 	
 		$res = CampaignRuntime::find($this->em, $id);
 	
@@ -333,6 +347,22 @@ class CampaignController extends SecuredController {
 				'form' => $form
 		);
 	
+	}
+	
+	protected function deleteCampaignRuntimeAction(Request $request, $_route){
+		$i=0;
+		$campaign = null;
+		foreach ($request->request->get('ids') as $id){
+			$res = CampaignRuntime::find($this->em, $id);			
+			if($res){
+				$i++;
+				$campaign = $res->getCampaign()->getId();
+				$this->checkCampaignAccess($res->getCampaign());				
+				$res->delete($this->em);
+			}
+		}
+		$this->alerts->addInfo($i.' elements sucessfully deleted');
+		return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign)));
 	}
 	
 	protected function campaignRefererForm($res){
@@ -428,6 +458,22 @@ class CampaignController extends SecuredController {
 				'form' => $form
 		);
 	
+	}
+	
+	protected function deleteCampaignRefererAction(Request $request, $_route){
+		$i=0;
+		$campaign = null;
+		foreach ($request->request->get('ids') as $id){
+			$res = CampaignRefererFilter::find($this->em, $id);
+			if($res){
+				$i++;
+				$campaign = $res->getCampaign()->getId();
+				$this->checkCampaignAccess($res->getCampaign());
+				$res->delete($this->em);
+			}
+		}
+		$this->alerts->addInfo($i.' elements sucessfully deleted');
+		return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign)));
 	}
 	
 }

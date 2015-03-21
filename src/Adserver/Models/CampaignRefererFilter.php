@@ -40,6 +40,7 @@ class CampaignRefererFilter extends \Fbn\Doctrine\SmartModel
     
     /**
      * @ORM\ManyToOne(targetEntity="Campaign", inversedBy="campaignRefererFilterList")
+     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $campaign;
     

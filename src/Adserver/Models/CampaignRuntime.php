@@ -41,6 +41,7 @@ class CampaignRuntime extends \Fbn\Doctrine\SmartModel
     
     /**
      * @ORM\ManyToOne(targetEntity="Campaign", inversedBy="campaignRuntimeList")
+     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $campaign;
     

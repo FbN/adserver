@@ -72,6 +72,7 @@ class Banner extends \Fbn\Doctrine\SmartModel
     
     /**
      * @ORM\ManyToOne(targetEntity="Campaign", inversedBy="bannerList")
+     * @ORM\JoinColumn(name="campaign_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $campaign;
     

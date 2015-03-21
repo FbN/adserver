@@ -27,7 +27,6 @@ $app = call_user_func(function() {
 });
 
 $app->register(new ServiceControllerServiceProvider());
-
 $app->register(new RoutingServiceProvider());
 	
 // === Doctrine ===	
@@ -78,8 +77,6 @@ $app['controllers.security'] = function($c){
 $app->get('/signIn', "controllers.security:signInAction");
 // ================
 
-// === Filters ===
-// ===============
 
 // === Alerts ===
 $app['alerts'] = function($c) use ($app){ 
@@ -119,21 +116,22 @@ $app['controllers.deliver'] = function($c){
 
 
 // === Routing ===
-
 $app->get('/', "controllers.home:indexAction")->bind('home.index');
-
 $app->get('/deliver', "controllers.deliver:indexAction")->bind('deliver.index');
-
 $app->get('/campaign', "controllers.campaign:indexAction")->bind('campaign.index');
 $app->match('/campaign/create', "controllers.campaign:createAction")->method('GET|POST')->bind('campaign.create');
+$app->post('/campaign/delete', "controllers.campaign:deleteAction")->bind('campaign.delete');
 $app->match('/campaign/edit/{id}', "controllers.campaign:editAction")->method('GET|POST')->bind('campaign.edit');
-$app->match('/campaign/runtime/create/{id}', "controllers.campaign:createCampaginRuntimeAction")->method('GET|POST')->bind('campaignRuntime.create');
-$app->match('/campaign/runtime/edit/{id}', "controllers.campaign:editCampaginRuntimeAction")->method('GET|POST')->bind('campaignRuntime.edit');
+$app->match('/campaign/runtime/create/{id}', "controllers.campaign:createCampaignRuntimeAction")->method('GET|POST')->bind('campaignRuntime.create');
+$app->match('/campaign/runtime/edit/{id}', "controllers.campaign:editCampaignRuntimeAction")->method('GET|POST')->bind('campaignRuntime.edit');
+$app->post('/campaign/runtime/delete', "controllers.campaign:deleteCampaignRuntimeAction")->bind('campaignRuntime.delete');
 $app->match('/campaign/banner/create/{id}', "controllers.banner:createAction")->method('GET|POST')->bind('banner.create');
 $app->match('/campaign/banner/edit/{id}', "controllers.banner:editAction")->method('GET|POST')->bind('banner.edit');
+$app->post('/campaign/banner/delete', "controllers.banner:deleteAction")->bind('banner.delete');
 $app->post('/campaign/banner/upload', "controllers.banner:uploadAction")->bind('banner.upload');
 $app->match('/campaign/referer/create/{id}', "controllers.campaign:createCampaginRefererAction")->method('GET|POST')->bind('campaignReferer.create');
 $app->match('/campaign/referer/edit/{id}', "controllers.campaign:editCampaginRefererAction")->method('GET|POST')->bind('campaignReferer.edit');
+$app->post('/campaign/referer/delete', "controllers.campaign:deleteCampaignRefererAction")->bind('campaignReferer.delete');
 
 return $app;
 

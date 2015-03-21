@@ -163,4 +163,20 @@ class BannerController extends SecuredController {
 			));
 	}
 	
+	protected function deleteAction(Request $request, $_route){
+		$i=0;
+		$campaign = null;
+		foreach ($request->request->get('ids') as $id){
+			$res = Banner::find($this->em, $id);
+			if($res){
+				$i++;
+				$campaign = $res->getCampaign()->getId();
+				$this->checkCampaignAccess($res->getCampaign());
+				$res->delete($this->em);
+			}
+		}
+		$this->alerts->addInfo($i.' elements sucessfully deleted');
+		return $this->redirect($this->urlGenerator->generate('campaign.edit', array('id'=>$campaign)));
+	}
+	
 }

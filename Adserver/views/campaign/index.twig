@@ -1,7 +1,7 @@
 {% extends "_layout/main.twig" %}
 {% block title %}Home{% endblock %}
 {% block body %}
-	<form role="form" class="list" method="POST" >
+	<form role="form" class="list" method="POST" id="campaignListForm">
 		<div class="row">	
 			<div class="col-sm-6">
 				<div class="input-group" id="search">
@@ -11,14 +11,15 @@
 			</div>
 			<div class="col-sm-6 text-right">
 				<div class="btn-group">
+					<a class="btn btn-default btn-flat multiDelete" href="#campaignListForm"><i class="fa fa-trash-o"></i></a>
 	            	<a class="btn btn-default btn-flat" href="{{ url('campaign.create') }}"><i class="fa fa-plus-square"></i></a>            	
 	           	</div>	           	
 			</div>
-		</div>	
+		</div>
 		<table class="table table-hover">
 				<tbody>
 					<tr>
-						<th class="formCell">Id</th>
+						<th class="formCell"><input class="checkall"  type="checkbox"/> Id</th>
 						<th class="formCell">Name</th>
 						<th class="formCell ">Goal</th>
 						<th class="formCell ">Delivered</th>
@@ -27,7 +28,7 @@
 					</tr>
 					{% for c in collection %}
 		    			<tr>
-		    				<td class="formCell">{{ c.getId() }}</td>
+		    				<td><input class="multiselector" type="checkbox"  name="ids[]" value="{{ c.getId() }}"/> {{ c.getId() }}</td>
 							<td class="formCell">{{ c.getName() }}</td>
 							<td class="formCell">{{ c.getGoal() }}</td>
 							<td class="formCell">{{ c.getDelivered() }}</td>
@@ -45,22 +46,6 @@
 				</ul>
 			</div>
 		</div>
-	</form>
-	<div class="modal fade" id="conferma" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-	        <h4 class="modal-title" id="myModalLabel">Warning...</h4>
-	      </div>
-	      <div class="modal-body">
-	        Are you sure?
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-	        <button id="deleteConfirm" type="button" class="btn btn-primary" data-action="<?php echo $ug->generate('agents.delete'); ?>">Go on!</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+		{% include "_templates/dialog.twig" with {'action': url('campaign.delete')} %}
+	</form>	
 {% endblock %}

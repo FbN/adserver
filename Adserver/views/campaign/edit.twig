@@ -11,22 +11,22 @@
   </ul>
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="campaing-tab">
-    	{{ form|raw }}
+    	{{ form|raw }}		
     </div>
     <div role="tabpanel" class="tab-pane" id="runtime-tab">
     	<div class="row">	
 			<div class="col-sm-12 text-right">
 				<div class="btn-group">
-	            	<a id="multiDelete" class="btn btn-default btn-flat" href="javascript:;"><i class="fa fa-trash-o"></i></a>
+	            	<a data-target="" class="btn btn-default btn-flat multiDelete" href="#campaignRuntimeForm"><i class="fa fa-trash-o"></i></a>
 	            	<a class="btn btn-default btn-flat" href="{{ url('campaignRuntime.create', {'id': id}) }}"><i class="fa fa-plus-square"></i></a>            	
 	           	</div>	           	
 			</div>
 		</div>
-		<form role="form" class="list" method="POST" >
+		<form role="form" class="list" method="POST" id="campaignRuntimeForm">
 			<table class="table table-hover">
 					<tbody>
 						<tr>
-							<th><input id="checkall"  type="checkbox"/></th>
+							<th><input class="checkall"  type="checkbox"/></th>
 							<th class="formCell">From</th>
 							<th class="formCell ">To</th>
 							<th class="formCell">&nbsp;</th>
@@ -41,22 +41,23 @@
 			    		{% endfor %}
 					</tbody>
 			</table>
-		</form>
+			{% include "_templates/dialog.twig" with {'action': url('campaignRuntime.delete')} %}
+		</form>		
     </div>
     <div role="tabpanel" class="tab-pane" id="referer-tab">
     	<div class="row">	
 			<div class="col-sm-12 text-right">
 				<div class="btn-group">
-	            	<a id="multiDelete" class="btn btn-default btn-flat" href="javascript:;"><i class="fa fa-trash-o"></i></a>
+	            	<a data-target="" class="btn btn-default btn-flat multiDelete" href="#campaignRefererForm"><i class="fa fa-trash-o"></i></a>
 	            	<a class="btn btn-default btn-flat" href="{{ url('campaignReferer.create', {'id': id}) }}"><i class="fa fa-plus-square"></i></a>            	
 	           	</div>	           	
 			</div>
 		</div>
-		<form role="form" class="list" method="POST" >
+		<form role="form" class="list" method="POST" id="campaignRefererForm">
 			<table class="table table-hover">
 					<tbody>
 						<tr>
-							<th><input id="checkall"  type="checkbox"/></th>
+							<th><input class="checkall"  type="checkbox"/></th>
 							<th class="formCell">Url</th>
 							<th class="formCell ">Only Host</th>
 							<th class="formCell">&nbsp;</th>
@@ -71,14 +72,15 @@
 			    		{% endfor %}
 					</tbody>
 			</table>
+			{% include "_templates/dialog.twig" with {'action': url('campaignReferer.delete')} %}			
 		</form>
     </div>
     <div role="tabpanel" class="tab-pane" id="banner-tab">
-		<form role="form" class="list" method="POST" >
+		<form role="form" class="list" method="POST" id="campaignBannerForm">
 			<div class="row">	
 				<div class="col-sm-12 text-right">
 					<div class="btn-group">
-		            	<a id="multiDelete" class="btn btn-default btn-flat" href="javascript:;"><i class="fa fa-trash-o"></i></a>
+		            	<a data-target="" class="btn btn-default btn-flat multiDelete" href="#campaignBannerForm"><i class="fa fa-trash-o"></i></a>
 		            	<a class="btn btn-default btn-flat" href="{{ url('banner.create', {'id': id}) }}"><i class="fa fa-plus-square"></i></a>            	
 		           	</div>	           	
 				</div>
@@ -86,7 +88,7 @@
 			<table class="table table-hover">
 					<tbody>
 						<tr>
-							<th><input id="checkall"  type="checkbox"/></th>
+							<th><input class="checkall"  type="checkbox"/></th>
 							<th class="formCell">Name</th>
 							<th class="formCell">Url</th>
 							<th class="formCell">Width</th>
@@ -105,6 +107,7 @@
 			    		{% endfor %}
 					</tbody>
 			</table>
+			{% include "_templates/dialog.twig" with {'action': url('banner.delete')} %}
 		</form>
     </div>
   </div>
