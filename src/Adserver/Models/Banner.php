@@ -76,6 +76,12 @@ class Banner extends \Fbn\Doctrine\SmartModel
      **/
     protected $campaign;
     
+    static function microtime_float()
+    {
+    	list($usec, $sec) = explode(" ", microtime());
+    	return ((float)$usec + (float)$sec);
+    }
+    
     public function getBanner(){
     	return "http://lorempixel.com/".$this->width."/".$this->height."/";
     }
@@ -100,58 +106,51 @@ class Banner extends \Fbn\Doctrine\SmartModel
     	$campaignTable = $em->getClassMetadata('\\Adserver\\Models\\Campaign')->getTableName();
     	$campaignRuntimeTable = $em->getClassMetadata('\\Adserver\\Models\\CampaignRuntime')->getTableName();
     	$campaignRefererFilter = $em->getClassMetadata('\\Adserver\\Models\\CampaignRefererFilter')->getTableName();
-
-    	$sql =  <<<EOT
-				FROM      `$campaignRuntimeTable` rt
-				LEFT JOIN `$campaignTable` c
-				ON        ( c.id = rt.campaign_id )
-				LEFT JOIN `$campaignRefererFilter` rf
-				ON        ( c.id = rf.campaign_id )
-				JOIN `$bannerTable` b
-				WHERE     c.active = true
-				AND		  c.delivered<c.goal
-				AND       rt.start <= :now
-				AND       rt.end >= :now
-				AND       (
-				                    c.time_filter_active = false
-				          OR        (d_sunday = true AND h16 = true))
-				AND       (			c.cookie IS NULL || c.cookie = :cookie)
-				AND       ((
-				                              rf.campaign_id IS NULL)
-				          OR        ( (
-				                                        rf.hostname_only=true
-				                              AND       rf.referer = :refererdomain)
-				                    OR        (
-				                                        rf.hostname_only=false
-				                              AND       rf.referer = :refererfull) ))
-				AND (c.id=b.campaign_id)
-    			AND ( b.width=:width AND b.height=:height )
+    	
+		
+		$daycol  = 'd_'.strtolower($now->format('l'));
+		$hourcol = 'h'.strtolower($now->format('G'));
+		$sql =  <<<EOT
+			SELECT DISTINCT b.id
+			FROM      `$campaignRuntimeTable` rt
+			JOIN      `$campaignTable` c 
+			JOIN      `$bannerTable` b
+			left join `$campaignRefererFilter` rf ON (c.id = rf.campaign_id)
+			WHERE           	
+				c.id = b.campaign_id
+			AND c.id = rt.campaign_id
+			AND c.active = true
+			AND (c.delivered<c.goal)
+			AND	((c.time_filter_active = true AND c.$daycol = true AND c.$hourcol = true) OR (c.time_filter_active = false))      
+			AND ( b.width=:width AND b.height=:height )
+			AND (rt.start <= :now AND rt.`end` >= :now)
 EOT;
+
+		if($referer){
+			$sql .= ' AND ((rf.id is null) OR ((rf.hostname_only=true AND rf.referer = :refererdomain) OR (rf.hostname_only=false AND rf.referer = :refererfull))) ';
+		}else{
+			$sql .= ' AND (rf.id is null) ';
+		}
+		
+		if($cookie){
+			$sql .= ' AND ( c.cookie IS NULL || c.cookie = :cookie) ';
+		}
     	
-    	$rsm = new ResultSetMapping();
-    	$query = $em->createNativeQuery("SELECT DISTINCT count(b.id) as tot ".$sql, $rsm);
-    	$query->setParameter('now', $now);
-    	$query->setParameter('cookie', $cookie);
-    	$query->setParameter('refererfull', $referer);
-    	$query->setParameter('refererdomain', self::parseDomain($referer));
-    	$query->setParameter('width', $width);
-    	$query->setParameter('height', $height);
-    	$rsm->addScalarResult('tot','tot');
-    	$tot = $query->getSingleResult()['tot'];
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->bindValue('now', $now, "datetime");
+    	$stmt->bindValue('width', $width);
+    	$stmt->bindValue('height', $height);
+    	if($cookie){
+    		$stmt->bindValue('cookie', $cookie);
+    	}
+    	if($referer){
+	    	$stmt->bindValue('refererfull', $referer);
+	    	$stmt->bindValue('refererdomain', self::parseDomain($referer));
+    	}    	
+    	$stmt->execute();
+    	$ids = $stmt->fetchAll(\PDO::FETCH_COLUMN);
     	
-    	$rsm = new ResultSetMappingBuilder($em);
-    	$rand = rand(0,$tot-1);
-    	$query = $em->createNativeQuery("SELECT b.* ".$sql. " LIMIT $rand,1", $rsm);
-    	$query->setParameter('now', $now);
-    	$query->setParameter('cookie', $cookie);
-    	$query->setParameter('width', $width);
-    	$query->setParameter('height', $height);
-    	$query->setParameter('refererfull', $referer);
-    	$query->setParameter('refererdomain', self::parseDomain($referer));
-    	$rsm->addRootEntityFromClassMetadata('\\Adserver\\Models\\Banner', 'b');
-    	$banner = $query->getSingleResult();
-    	
-    	return $banner;
+    	return Banner::find($em, array_rand($ids));
     	
     }
     
