@@ -35,6 +35,12 @@ class Fakefill extends AppCommand
         $this
         ->setName('adserver:fakefill')
         ->setDescription('Generate random data')
+        ->addOption(
+        		'clean',
+        		'c',
+        		InputOption::VALUE_NONE,
+        		'Clean DB'
+        )
         ->setHelp(<<<EOT
 Generate random data.
 EOT
@@ -43,7 +49,7 @@ EOT
     
     protected function user(){
     	$u = new \Adserver\Models\User();
-    	$u->setEmail($this->fake->email);
+    	$u->setEmail($this->fake->randomLetter.$this->fake->randomLetter.$this->fake->randomDigit.'--'.$this->fake->email);
 		$u->setEncPassword('fabiano', $this->app['security.encoder.digest']);
 		$u->setRole(\Adserver\Models\User::ROLE_CUSTOMER);
 		$u->setFirstname($this->fake->firstName);
@@ -55,7 +61,7 @@ EOT
     
     protected function campaign($u){
     	$c = new \Adserver\Models\Campaign();
-    	$c->setName($this->fake->company.' '.$this->fake->randomDigit.$this->fake->randomDigit);
+    	$c->setName($this->fake->company.' '.$this->fake->randomNumber(8));
     	$c->setActive($this->fake->boolean(80));
     	$c->setGoal($this->fake->numberBetween(500, 10000));
     	$c->getUserList()->add($u);
@@ -121,6 +127,7 @@ EOT
     	$b->setName($this->fake->sentence(2));
     	$b->setCaption($this->fake->sentence(15));
     	$b->setUrl($this->fake->url);
+    	$b->setFile('fake.jpg');
     	$b->setHeight($this->fake->randomElement(array(100,200,300,500)));
     	$b->setWidth($this->fake->randomElement(array(100,200,300,500)));
     	$b->setCampaign($c);
@@ -163,9 +170,13 @@ EOT
     	
         $this->fake = \Faker\Factory::create();
         
-        $this->cleanAll();
+        $this->app['orm.em']->getConnection()->getConfiguration()->setSQLLogger(null);
         
-        $userN = 100;
+        if ($input->getOption('clean')) {
+        	$this->cleanAll();
+        }
+        
+        $userN = 10000;
         $progress = new ProgressBar($output, $userN);
         $progress->start();
         for($i=0; $i<$userN; $i++){
@@ -204,6 +215,8 @@ EOT
         		
         	}
         	$this->app['orm.em']->flush();
+        	$this->app['orm.em']->clear();
+        	gc_collect_cycles();
         	$progress->advance();
         }
         $progress->finish();

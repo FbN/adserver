@@ -28,7 +28,7 @@ class Campaign extends \Fbn\Doctrine\SmartModel
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=50, unique=true)
+     * @ORM\Column(name="name", type="string", length=50)
      */
     protected $name;
     
