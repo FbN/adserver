@@ -41,6 +41,12 @@ class Fakefill extends AppCommand
         		InputOption::VALUE_NONE,
         		'Clean DB'
         )
+        ->addOption(
+        		'iteration',
+        		'i',
+        		InputOption::VALUE_REQUIRED,
+        		'How many iteration. (every iteration is a 1 user, 10 campaigns, 100 banners). Default 100.'
+        )
         ->setHelp(<<<EOT
 Generate random data.
 EOT
@@ -176,7 +182,8 @@ EOT
         	$this->cleanAll();
         }
         
-        $userN = 10000;
+        $userN = $input->getOption('iteration')?$input->getOption('iteration'):100;
+        
         $progress = new ProgressBar($output, $userN);
         $progress->start();
         for($i=0; $i<$userN; $i++){

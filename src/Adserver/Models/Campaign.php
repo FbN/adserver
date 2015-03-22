@@ -9,7 +9,7 @@ use JMS\Serializer\Annotation as SERIALIZER;
 /**
  * User
  *
- * @ORM\Table(name="campaign")
+ * @ORM\Table(name="campaign",indexes={@ORM\Index(name="cookie_idx", columns={"cookie"})}))
  * @ORM\Entity(repositoryClass="Fbn\Doctrine\SmartRepository")
  * @ORM\ChangeTrackingPolicy("NOTIFY")
  */

@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 /**
  * User
  *
- * @ORM\Table(name="banner",indexes={@ORM\Index(name="search_width", columns={"width"}), @ORM\Index(name="search_height", columns={"height"})})
+ * @ORM\Table(name="banner",indexes={@ORM\Index(name="w_h", columns={"width", "height"})})
  * @ORM\Entity(repositoryClass="Fbn\Doctrine\SmartRepository")
  * @ORM\ChangeTrackingPolicy("NOTIFY")
  */

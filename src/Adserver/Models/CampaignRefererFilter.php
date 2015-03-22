@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation as SERIALIZER;
 /**
  * User
  *
- * @ORM\Table(name="campaign_referer_filter")
+ * @ORM\Table(name="campaign_referer_filter",indexes={@ORM\Index(name="referer_idx", columns={"hostname_only","referer"})}))
  * @ORM\Entity(repositoryClass="Fbn\Doctrine\SmartRepository")
  * @ORM\ChangeTrackingPolicy("NOTIFY")
  */

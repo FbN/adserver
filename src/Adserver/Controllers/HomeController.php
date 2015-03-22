@@ -11,7 +11,7 @@ class HomeController extends SecuredController {
 	protected $titolo='Dashboard';
 		
 	protected function indexAction(Request $request){
-
+		return array('domain'=>$this->config['front.domain']);
 	}
 	
 }
